@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -7,17 +8,24 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.json.*;
 
 @WebServlet("/WeatherApi")
 public class WeatherApi extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		String apiKey = "0774b00dce86d28cb338061e92fdfb43"; // 여기에 OpenWeatherMap API 키를 입력하세요.
-		String cityName = "Seoul"; // 날씨 정보를 조회할 도시 이름
+		String apiKey = "0774b00dce86d28cb338061e92fdfb43"; //  OpenWeatherMap API 키
+		String cityName = "incheon"; // 날씨 정보를 조회할 도시 이름
 		String urlString = "http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + apiKey
 				+ "&units=metric";
 
+		//클라이언트 응답을 위한 출력 스트림 확보
+		response.setContentType("text/html;charset=UTF-8");
+		PrintWriter out = response.getWriter();
+		
+				
 		try {
 			URL url = new URL(urlString);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -41,7 +49,29 @@ public class WeatherApi extends HttpServlet {
 				JSONObject json = new JSONObject(info.toString());
 				double tempMin = json.getJSONObject("main").getDouble("temp_min");
 				double tempMax = json.getJSONObject("main").getDouble("temp_max");
+				
+				// 'weather' 배열 접근
+				JSONArray weatherArray = json.getJSONArray("weather");
+				ArrayList<String> mainValues = new ArrayList<String>();
 
+				// 'weather' 배열 내의 객체들을 순회하면서 'main' 항목 찾기
+				for (int i = 0; i < weatherArray.length(); i++) {
+				    JSONObject weatherItem = weatherArray.getJSONObject(i);
+				    mainValues.add(weatherItem.getString("main"));  // 'main' 값을 리스트에 추가
+				}
+				
+				List<String> upperValues = mainValues.stream() 
+						.map(s-> s.replace(" ", "")) //공백 제거
+						.map(String::toUpperCase)//대문자변환
+						.collect(Collectors.toList()); //결과수집.
+						
+				String weather = "";  // 결과를 저장할 문자열 변수
+				for (String main : upperValues) {
+				    if (main != null) {  // null이 아닐 때만 실행
+				        weather += main + "";  // 문자열에 추가
+				    }
+				}
+				weather = WeatherKR.getWeatherKR(weather);
 				/*
 				 * Weather Information for Seoul
 				 * {
@@ -66,6 +96,33 @@ public class WeatherApi extends HttpServlet {
 				
 				System.out.println("오늘의 최저 기온은 : " + tempMin);
 				System.out.println("오늘의 최고 기온은 : " + tempMax);
+				System.out.println(weather);
+				
+				    out.println("<!DOCTYPE html>");
+	                out.println("<html>");
+	                out.println("<head>");
+	                out.println("<style>@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');\r\n"
+	                		+ ".gowun-batang-regular {\r\n"
+	                		+ "  font-family: \"Gowun Batang\", serif;\r\n"
+	                		+ "  font-weight: 400;\r\n"
+	                		+ "  font-style: normal;\r\n"
+	                		+ "}\r\n"
+	                		+ "* {\r\n"
+	                		+ "	font-family : \"Gowun Batang\";\r\n"
+	                		+ "	text-align : center;\r\n"
+	                		+ "} </style>");
+	                out.println("<title>Weather Information for " + cityName + "</title>");
+	                out.println("<meta charset='UTF-8'>");
+	                out.println("</head>");
+	                out.println("<body>");
+	                out.println("<h3>🌤날씨 알리미</h3>");
+	                out.println("<hr>");
+	                out.println("<p>도시 :" + cityName + "<p>");
+	                out.println("<p>오늘의 날씨 : " + weather);
+	                out.println("<p>오늘의 최고 기온 : " + tempMin + "°C</p>");
+	                out.println("<p>오늘의 최저 기온 : " + tempMax + "°C</p>");
+	                out.println("</body>");
+	                out.println("</html>");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
