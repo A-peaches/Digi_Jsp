@@ -2,6 +2,7 @@ package beans;
 
 
 public class MyCookie {
+	private String img;
 	private String name;
 	private int price;
 	private int Cnt;
@@ -29,6 +30,14 @@ public class MyCookie {
 	}
 	public void setCnt(int cnt) {
 		Cnt = cnt;
+	}
+
+	public String getImg() {
+		return img;
+	}
+
+	public void setImg(String img) {
+		this.img = img;
 	}
 	
 	

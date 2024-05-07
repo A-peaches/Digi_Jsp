@@ -18,20 +18,6 @@
 		padding : 5px 5px 5px 5px;
 	}
 </style>
-
-</head>	
-<body>
-	<h1>CookieList</h1>
-	<hr>
-	<jsp:include page="loginState.jsp"></jsp:include>
-	<form name="List" method ="post" action="cookieCart.jsp">
-	<table border="1">
-		<tr>
-			<td>제품 사진</td>
-			<td>제품명</td>
-			<td>제품가격</td>
-			<td>수량</td>
-		</tr>
 		<script>
 				// 수량 증가
 				function increase(cookie) {
@@ -48,7 +34,46 @@
 				        cnt.value = quantity - 1;
 				    }
 				}
-			</script>
+				
+				function toCart() {
+					window.location.href="/Day5/CookieShopping/cookieCart.jsp";
+				}
+				
+				function isEmpty() {
+					let cookies = ["Ame","Double","Otmeal"];
+					let allEmpty = true;
+					
+					for(let i =0; i<3; i++){
+						let cnt = document.getElementById("quantity" + cookies[i]).value;
+						console.log(cnt);
+						if(parseInt(cnt)>0) {
+							allEmpty = false;
+							break;
+						}
+					}
+					
+					if(allEmpty) {
+						alert("1개 이상의 상품을 선택해주세요!");
+						return false;
+					}
+					
+					return true;
+				}
+				
+		</script>
+</head>	
+<body>
+	<h1>CookieList</h1>
+	<hr>
+	<jsp:include page="loginState.jsp"></jsp:include>
+	<form name="List" method ="post" action="cookieCart.jsp" onsubmit="return isEmpty()">
+	<table border="1">
+		<tr>
+			<td>제품 사진</td>
+			<td>제품명</td>
+			<td>제품가격</td>
+			<td>수량</td>
+		</tr>
 		<tr>
 			<td><img src="../../CSS/AmericanCookie.png" class="img"/></td>
 			<td>AmericanCookie</td>
@@ -81,8 +106,7 @@
 		</tr>
 	</table>
 		<input type=submit name=intoCart value="장바구니 담기 및 이동" style="margin-top:20px"/><br>
-		<a href="cookieCart.jsp" class="button" style="margin-top:20px; display: inline-block; text-align: center; text-decoration: none;">장바구니 이동</a>
-
+		<input type=button name=intoCart onclick="toCart()" value="장바구니 이동" style="margin-top:20px"/><br>
 
 	</form>
 </body>
