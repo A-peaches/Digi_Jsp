@@ -9,7 +9,7 @@
 
 	try {
 		Context init = new InitialContext();
-		DataSource ds = (DataSource) init.lookup("java:comp/env/jdbc/Mydb");
+		DataSource ds = (DataSource) init.lookup("java:comp/env/jdbc/MysqlDB");
 		conn = ds.getConnection();
 	
 		out.println("<h3>DB 연결 되었습니다.</h3>");
@@ -17,4 +17,5 @@
 		out.println("<h3>DB 연결에 실패하였습니다.</h3>");
 		e.printStackTrace();
 	}
+	
 %>

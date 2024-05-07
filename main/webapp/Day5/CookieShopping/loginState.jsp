@@ -16,14 +16,11 @@
 		window.location.href= "login.jsp";
 	<% } %>
 	}
-	
-
 </script>
 </script>
 
 </head>
 <body onload="checkLogin()">
-
 	<p>
 	♥ <%=session.getAttribute("id") %> ♥ 님 환영합니다 !!  |  
 	누적 로그인 횟수 : <%=session.getAttribute("loginCount") %>  |
