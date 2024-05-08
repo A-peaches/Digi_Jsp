@@ -1,3 +1,4 @@
+package test;
 
 public enum WeatherKR {
     CLEAR("맑은 하늘"),

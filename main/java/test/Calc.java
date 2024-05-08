@@ -1,3 +1,4 @@
+package test;
 
 public class Calc {
 	private int num1,num2;
